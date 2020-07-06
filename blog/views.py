@@ -45,7 +45,8 @@ def index(request):
 
 
 def post_detail(request, slug):
-    posts = Post.objects.popular().fetch_tags().prefetch_related('author')
+    posts = Post.objects.popular().fetch_tags()\
+        .prefetch_related('author') # при использовании select_related скорость загрузки страницы сильно снижается
 
     try:
         main_post = posts.get(slug=slug)
@@ -54,7 +55,7 @@ def post_detail(request, slug):
 
     comments = main_post.comments.prefetch_related('author')
     serialized_comments = []
-    for comment in comments.all():
+    for comment in comments:
         serialized_comments.append({
             'text': comment.text,
             'published_at': comment.published_at,
